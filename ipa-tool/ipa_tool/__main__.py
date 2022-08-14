@@ -1,2 +1,2 @@
 from .main import app
-app(prog_name="ipa-info")
+app(prog_name="ipa-tool")

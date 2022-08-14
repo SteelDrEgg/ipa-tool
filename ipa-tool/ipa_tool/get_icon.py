@@ -1,6 +1,5 @@
 import os, re
 
-
 def get_icon(ipa, plist, multi: bool = False):
     '''
     :param ipa: zipfile object
@@ -50,17 +49,14 @@ def get_icon(ipa, plist, multi: bool = False):
     # Turning adding .png to ipa
     if isinstance(icon_name, str):
         icon_name = [icon_name]
-    for name in icon_name:
-        if '.png' not in name:
-            icon_name[icon_name.index(name)] = name + '.png'
 
     icons={}
-
     for file in ipa.namelist():
-        if file.split(os.sep)[-1] in icon_name:
-            icons[file.split(os.sep)[-1]]=ipa.read(file)
-            if not multi:
-                return icons
+        for name in icon_name:
+            if name in file.split(os.sep)[-1]:
+                icons[file.split(os.sep)[-1]]=ipa.read(file)
+                if not multi:
+                    return icons
     return icons
 
 def ipng2png(ipng: bytes, error: bool = True) -> bytes:
@@ -80,6 +76,9 @@ def ipng2png(ipng: bytes, error: bool = True) -> bytes:
     new_PNG = signature_header
     # The index of byte reading
     current_byte = 8
+
+    # Have CgBI?
+    cgbi=False
 
     # Going through every chunk in png
     while current_byte < len(ipng):
@@ -107,11 +106,18 @@ def ipng2png(ipng: bytes, error: bool = True) -> bytes:
         # Removing CgBI chunk
         if chunk_type == 'CgBI':
             current_byte = current_byte + chunk_length + 4
+            cgbi=True
             continue
         # Reading img width and height
         elif chunk_type == 'IHDR':
-            img_width = int.from_bytes(chunk_data[0:4], 'big')
-            img_height = int.from_bytes(chunk_data[4:8], 'big')
+            if cgbi:
+                img_width = int.from_bytes(chunk_data[0:4], 'big')
+                img_height = int.from_bytes(chunk_data[4:8], 'big')
+            else:
+                if error:
+                    raise ValueError("CgBI chunk not found, mey be a normal PNG!")
+                else:
+                    return ipng
         # Turning BGRA into RGBA
         elif chunk_type == 'IDAT':
             # Decompressing, see more https://iphonedev.wiki/index.php/CgBI_file_format#Differences_from_PNG

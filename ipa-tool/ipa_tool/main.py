@@ -12,7 +12,7 @@ app = typer.Typer()
 
 
 @app.command()
-def getIcon(ipa_path: str = typer.Argument(..., help="Aboslute path to .ipa file"),
+def get_info(ipa_path: str = typer.Argument(..., help="Aboslute path to .ipa file"),
             output_path: str = typer.Option('', '-o', help='The path to directory where you want the output files be'),
             multi_icon: bool = typer.Option(False, '-mi', help='Get multiple icon if possible')):
     ipa_path = str(pathlib.Path(ipa_path).absolute())
