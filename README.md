@@ -10,7 +10,7 @@ pip install ipa-tool
 
 **Over wheel**
 ```shell
-pip install --user {whl from release}.whl
+pip install --user {find in release}.whl
 ```
 
 ### Use as CLI
