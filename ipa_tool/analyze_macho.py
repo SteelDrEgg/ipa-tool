@@ -32,7 +32,7 @@ def is_encrypted(macho):
     :return: bool, is encrypted or not
     '''
     encry_info=macho.get(lief.MachO.LOAD_COMMAND_TYPES.ENCRYPTION_INFO)
-    if encry_info!=None:
+    if encry_info:
         if encry_info.crypt_id == 1:
             return True
         else:
