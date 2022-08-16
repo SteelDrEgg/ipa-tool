@@ -35,5 +35,23 @@ $ ipa-tool [OPTIONS] IPA_PATH
 ```python
 from ipa_tool import ipaInfos
 
-ipa_tool = ipaInfos(ipa_path)
+ipa_tool = ipaInfos( {ipa_path} )
+```
+
+`ipaInfos` will return a class
+```python
+class ipaInfos():
+    name: str
+    device: list
+    size: int
+    version: str
+    bundleID: str
+    encrypt: bool
+    minOS: str
+    icon: dict
+    rawPlist: dict
+```
+You can turn it into dict by
+```python
+ipa_info_dict = ipa_tool.__dict__
 ```
