@@ -7,6 +7,7 @@ class ipaInfos():
     encrypt: bool
     minOS: str
     icon: dict
+    md5: bytes
     rawPlist: dict
 
     def __init__(self, ipa_path: str, get_icon: bool = True, get_multi_icon: bool = False):
@@ -15,11 +16,18 @@ class ipaInfos():
         from .get_icon import get_icon, ipng2png
         from .get_size import get_size
         from .analyze_macho import parse_macho, is_encrypted
+        from .calc_md5 import calc_md5
 
+        # Calculate md5
+        self.md5=calc_md5(ipa_path)
+
+        # Unzip ipa
         ipa = load_ipa(ipa_path)
 
+        # Load plist
         self.rawPlist = format_plist(ipa)
 
+        # Load device family
         try:
             if 1 in self.rawPlist['UIDeviceFamily'] and 2 in self.rawPlist['UIDeviceFamily']:
                 self.device = ['iPhone', 'iPad']
@@ -30,6 +38,7 @@ class ipaInfos():
         except Exception:
             self.device = []
 
+        # Load app name
         try:
             self.name = self.rawPlist['CFBundleDisplayName']
         except KeyError:
@@ -41,14 +50,17 @@ class ipaInfos():
                 except Exception:
                     self.name = None
 
+        # Parse macho executable
         macho = parse_macho(self.rawPlist, ipa)
         self.encrypt = is_encrypted(macho)
 
+        # Calc size
         self.size = get_size(ipa)
         self.version = self.rawPlist['CFBundleVersion']
         self.minOS = self.rawPlist['MinimumOSVersion']
         self.bundleID = self.rawPlist['CFBundleIdentifier']
 
+        # Get icon and turns it into png
         if get_icon:
             ipng = get_icon(ipa, self.rawPlist, multi=get_multi_icon)
             self.icon = {}
