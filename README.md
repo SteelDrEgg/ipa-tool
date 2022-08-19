@@ -49,6 +49,7 @@ class ipaInfos():
     encrypt: bool
     minOS: str
     icon: dict
+    md5: bytes
     rawPlist: dict
 ```
 You can turn it into dict by
