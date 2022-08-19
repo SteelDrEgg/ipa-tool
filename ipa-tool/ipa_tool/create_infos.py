@@ -82,7 +82,7 @@ class ipaInfos():
                     try:
                         self.icon[name] = ipng2png(ipng[name], error=True)
                     except ValueError:
-                        self.icon = {name, self.icon[name]}
+                        self.icon[name] = ipng[name]
                     except ArithmeticError:
                         continue
                 if len(self.icon) < 1:
