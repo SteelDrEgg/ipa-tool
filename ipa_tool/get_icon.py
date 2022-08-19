@@ -1,6 +1,6 @@
 import os, re
 
-def get_icon(ipa, plist, multi: bool = False):
+def get_icon(ipa, plist):
     '''
     :param ipa: zipfile object
     :param plist: dict, formatted plist
@@ -20,31 +20,7 @@ def get_icon(ipa, plist, multi: bool = False):
                 try:
                     icon_name = plist['CFBundlePrimaryIcon']['CFBundleIconFiles']
                 except Exception:
-                    print('no icon found in plist')
-                    # If no icon not defined in plist file
-                    imgs = []
-                    # Grab all png files
-                    pt = r'Payload' + os.sep + '[^' + os.sep + ']*.app' + os.sep + '*.png'
-                    pattern = re.compile(pt)
-                    # Tranversing files in ipa
-                    for file in ipa.name_list():
-                        matched = pattern.match(file)
-                        if matched is not None:
-                            imgs.append(matched.group(0))
-
-                    # Depend whether img is icon
-                    candidates = []
-                    for img in imgs:
-                        if ('icon' in img) or ('Icon' in img):
-                            candidates.append(img)
-                    # Is icon really app icon? It could be social media icon
-                    for icon in candidates:
-                        if ('@' in icon) or ('x' in icon):
-                            icon_name = icon
-                            break
-
-                    # Returning
-                    return ipa.read(icon_name)
+                    return fuzzy_search(ipa)
 
     # Turning adding .png to ipa
     if isinstance(icon_name, str):
@@ -55,9 +31,38 @@ def get_icon(ipa, plist, multi: bool = False):
         for name in icon_name:
             if name in file.split(os.sep)[-1]:
                 icons[file.split(os.sep)[-1]]=ipa.read(file)
-                if not multi:
-                    return icons
-    return icons
+    if len(icons)>0:
+        return icons
+    else:
+        return fuzzy_search(ipa)
+
+
+def fuzzy_search(ipa):
+    # If can't fount icon
+    imgs = []
+    # Grab all png files
+    pt = r'Payload' + os.sep + '[^' + os.sep + ']*.app' + os.sep + '*.png'
+    pattern = re.compile(pt)
+    # Tranversing files in ipa
+    for file in ipa.name_list():
+        matched = pattern.match(file)
+        if matched is not None:
+            imgs.append(matched.group(0))
+
+    # Depend whether img is icon
+    candidates = []
+    for img in imgs:
+        if ('icon' in img) or ('Icon' in img):
+            candidates.append(img)
+    # Is icon really app icon? It could be social media icon
+    for icon in candidates:
+        if ('@' in icon) or ('x' in icon):
+            icon_name = icon
+            break
+
+    # Returning
+    return ipa.read(icon_name)
+
 
 def ipng2png(ipng: bytes, error: bool = True) -> bytes:
     '''
@@ -116,6 +121,7 @@ def ipng2png(ipng: bytes, error: bool = True) -> bytes:
             else:
                 if error:
                     raise ValueError("CgBI chunk not found, mey be a normal PNG!")
+                    raise
                 else:
                     return ipng
         # Turning BGRA into RGBA
@@ -126,7 +132,7 @@ def ipng2png(ipng: bytes, error: bool = True) -> bytes:
                 chunk_data = zlib.decompress(chunk_data, wbits=-8, bufsize=buffer_size)
             except Exception:
                 if error:
-                    raise ValueError('Not a CgBI!')
+                    raise ArithmeticError('Error resolving IDAT chunk!')
                 else:
                     pass
 

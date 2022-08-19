@@ -10,7 +10,14 @@ class ipaInfos():
     md5: bytes
     rawPlist: dict
 
-    def __init__(self, ipa_path: str, get_icon: bool = True, get_multi_icon: bool = False, chunk_size: int=8388608):
+    def __init__(self, ipa_path: str, get_icon: bool = True, get_multi_icon: bool = True, chunk_size: int = 8388608):
+        '''
+        :param ipa_path: str        path to ipa
+        :param get_icon: bool       get icon?
+        :param get_multi_icon: bool get multiple icon?
+        :param chunk_size: int      chunk size when reading
+        '''
+
         from .load_ipa import load_ipa
         from .format_plist import format_plist
         from .get_icon import get_icon, ipng2png
@@ -19,7 +26,7 @@ class ipaInfos():
         from .calc_md5 import calc_md5
 
         # Calculate md5
-        self.md5=calc_md5(ipa_path, chunk_size)
+        self.md5 = calc_md5(ipa_path, chunk_size)
 
         # Unzip ipa
         ipa = load_ipa(ipa_path)
@@ -62,13 +69,23 @@ class ipaInfos():
 
         # Get icon and turns it into png
         if get_icon:
-            ipng = get_icon(ipa, self.rawPlist, multi=get_multi_icon)
+            ipng = get_icon(ipa, self.rawPlist)
             self.icon = {}
             if get_multi_icon:
                 for icon in ipng.keys():
-                    self.icon[icon] = ipng2png(ipng[icon], error=False)
+                    try:
+                        self.icon[icon] = ipng2png(ipng[icon], error=True)
+                    except ValueError:
+                        self.icon[icon] = ipng[icon]
             else:
-                name = list(ipng.keys())[0]
-                self.icon[name] = ipng2png(ipng[name], error=False)
+                for name in ipng.keys():
+                    try:
+                        self.icon[name] = ipng2png(ipng[name], error=True)
+                    except ValueError:
+                        self.icon = {name, self.icon[name]}
+                    except ArithmeticError:
+                        continue
+                if len(self.icon) < 1:
+                    self.icon = None
         else:
-            self.icon=None
+            self.icon = None
