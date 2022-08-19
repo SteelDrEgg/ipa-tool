@@ -10,7 +10,7 @@ class ipaInfos():
     md5: bytes
     rawPlist: dict
 
-    def __init__(self, ipa_path: str, get_icon: bool = True, get_multi_icon: bool = False):
+    def __init__(self, ipa_path: str, get_icon: bool = True, get_multi_icon: bool = False, chunk_size: int=8388608):
         from .load_ipa import load_ipa
         from .format_plist import format_plist
         from .get_icon import get_icon, ipng2png
@@ -19,7 +19,7 @@ class ipaInfos():
         from .calc_md5 import calc_md5
 
         # Calculate md5
-        self.md5=calc_md5(ipa_path)
+        self.md5=calc_md5(ipa_path, chunk_size)
 
         # Unzip ipa
         ipa = load_ipa(ipa_path)
