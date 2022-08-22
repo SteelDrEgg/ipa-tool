@@ -42,8 +42,14 @@ class ipaInfos():
                 self.device = ['iPhone']
             elif 2 in self.rawPlist['UIDeviceFamily']:
                 self.device = ['iPad']
+            elif '1' in self.rawPlist['UIDeviceFamily'] and '2' in self.rawPlist['UIDeviceFamily']:
+                self.device = ['iPhone', 'iPad']
+            elif '1' in self.rawPlist['UIDeviceFamily']:
+                self.device = ['iPhone']
+            elif '2' in self.rawPlist['UIDeviceFamily']:
+                self.device = ['iPad']
         except Exception:
-            self.device = []
+            self.device = None
 
         # Load app name
         try:
@@ -70,22 +76,25 @@ class ipaInfos():
         # Get icon and turns it into png
         if get_icon:
             ipng = get_icon(ipa, self.rawPlist)
-            self.icon = {}
-            if get_multi_icon:
-                for icon in ipng.keys():
-                    try:
-                        self.icon[icon] = ipng2png(ipng[icon], error=True)
-                    except ValueError:
-                        self.icon[icon] = ipng[icon]
+            if ipng:
+                self.icon = {}
+                if get_multi_icon:
+                    for icon in ipng.keys():
+                        try:
+                            self.icon[icon] = ipng2png(ipng[icon], error=True)
+                        except ValueError:
+                            self.icon[icon] = ipng[icon]
+                else:
+                    for name in ipng.keys():
+                        try:
+                            self.icon[name] = ipng2png(ipng[name], error=True)
+                        except ValueError:
+                            self.icon[name] = ipng[name]
+                        except ArithmeticError:
+                            continue
+                    if len(self.icon) < 1:
+                        self.icon = None
             else:
-                for name in ipng.keys():
-                    try:
-                        self.icon[name] = ipng2png(ipng[name], error=True)
-                    except ValueError:
-                        self.icon[name] = ipng[name]
-                    except ArithmeticError:
-                        continue
-                if len(self.icon) < 1:
-                    self.icon = None
+                self.icon = None
         else:
             self.icon = None

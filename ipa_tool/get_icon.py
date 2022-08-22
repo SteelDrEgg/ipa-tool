@@ -44,7 +44,7 @@ def fuzzy_search(ipa):
     pt = r'Payload' + os.sep + '[^' + os.sep + ']*.app' + os.sep + '*.png'
     pattern = re.compile(pt)
     # Tranversing files in ipa
-    for file in ipa.name_list():
+    for file in ipa.namelist():
         matched = pattern.match(file)
         if matched is not None:
             imgs.append(matched.group(0))
@@ -60,8 +60,11 @@ def fuzzy_search(ipa):
             icon_name = icon
             break
 
-    # Returning
-    return ipa.read(icon_name)
+    try:
+        # Returning
+        return ipa.read(icon_name)
+    except UnboundLocalError:
+        return None
 
 
 def ipng2png(ipng: bytes, error: bool = True) -> bytes:
