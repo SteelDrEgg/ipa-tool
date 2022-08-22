@@ -17,8 +17,13 @@ pip install --user {find in release}.whl
 **Usage**:
 
 ```console
-$ ipa-tool [OPTIONS] IPA_PATH
+$ ipa-tool COMMAND [Options] [ARGS]... 
 ```
+
+**Command**:
+
+* `get-info`: Returns ipa infos in json
+* `cgbi2png`: Turns apple cgbi into normal png
 
 **Arguments**:
 
