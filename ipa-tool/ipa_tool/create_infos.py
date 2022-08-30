@@ -10,7 +10,7 @@ class ipaInfos():
     md5: bytes
     rawPlist: dict
 
-    def __init__(self, ipa_path: str, get_icon: bool = True, get_multi_icon: bool = True, chunk_size: int = 8388608):
+    def __init__(self, ipa_path: str, get_app_icon: bool = True, get_multi_icon: bool = True, chunk_size: int = 8388608):
         '''
         :param ipa_path: str        path to ipa
         :param get_icon: bool       get icon?
@@ -74,7 +74,7 @@ class ipaInfos():
         self.bundleID = self.rawPlist['CFBundleIdentifier']
 
         # Get icon and turns it into png
-        if get_icon:
+        if get_app_icon:
             ipng = get_icon(ipa, self.rawPlist)
             if ipng:
                 self.icon = {}
