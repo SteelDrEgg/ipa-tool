@@ -16,7 +16,8 @@ def format_plist(ipa_file):
         # Get all file in ipa
         name_list = ipa_file.namelist()
         # Generate pattern
-        pt = r'Payload' + os.sep + '[^' + os.sep + ']*.app' + os.sep + 'Info.plist'
+        # pt = r'Payload' + os.sep + '[^' + os.sep + ']*.app' + os.sep + 'Info.plist'
+        pt = r'Payload/[^/]*.app/Info.plist'
         # Use expression to match plist file
         pattern = re.compile(pt)
         # Tranversing files in ipa

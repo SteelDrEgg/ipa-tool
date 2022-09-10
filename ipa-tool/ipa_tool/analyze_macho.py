@@ -10,7 +10,7 @@ def parse_macho(plist, ipa_file):
 
     name_list = ipa_file.namelist()
     # Use expression to match file
-    pt = r'Payload' + os.sep + '[^' + os.sep + ']*.app' + os.sep + exe_name
+    pt = r'Payload/[^/]*.app/' + exe_name
     pattern = re.compile(pt)
     # Tranversing files in ipa
     for path in name_list:
