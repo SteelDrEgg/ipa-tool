@@ -76,7 +76,6 @@ class ipaInfos():
         # Get icon and turns it into png
         if get_app_icon:
             ipng = get_icon(ipa, self.rawPlist)
-            print(ipng.keys())
             if ipng:
                 self.icon = {}
                 if get_multi_icon:
