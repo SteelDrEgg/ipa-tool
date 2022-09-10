@@ -40,7 +40,7 @@ $ ipa-tool COMMAND [Options] [ARGS]...
 ```python
 from ipa_tool import ipaInfos
 
-ipa_tool = ipaInfos( {ipa_path} )
+ipa_infos = ipaInfos( {ipa_path} )
 ```
 
 `ipaInfos` will return a class
