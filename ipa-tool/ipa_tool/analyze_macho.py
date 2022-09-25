@@ -38,4 +38,8 @@ def is_encrypted(macho):
         else:
             return False
     else:
+        encry_info = macho.get(lief.MachO.LOAD_COMMAND_TYPES.ENCRYPTION_INFO_64)
+        if encry_info:
+            if encry_info.crypt_id == 1:
+                return True
         return False
