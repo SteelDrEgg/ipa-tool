@@ -14,9 +14,11 @@ def parse_macho(plist, ipa_file):
     pattern = re.compile(pt)
     # Tranversing files in ipa
     for path in name_list:
+        path=path.encode("CP437").decode("UTF-8")
         m = pattern.match(path)
         if m is not None:
             exec_path=m.group()
+            exec_path=exec_path.encode("UTF-8").decode("CP437")
             break
 
     # Read executable into memory
