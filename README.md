@@ -52,6 +52,7 @@ class ipaInfos():
     version: str
     bundleID: str
     encrypt: bool
+    arch: str
     minOS: str
     icon: dict
     md5: bytes

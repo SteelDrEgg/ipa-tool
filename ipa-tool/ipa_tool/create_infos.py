@@ -5,6 +5,7 @@ class ipaInfos():
     version: str
     bundleID: str
     encrypt: bool
+    arch: str
     minOS: str
     icon: dict
     md5: bytes
@@ -22,7 +23,7 @@ class ipaInfos():
         from .format_plist import format_plist
         from .get_icon import get_icon, ipng2png
         from .get_size import get_size
-        from .analyze_macho import parse_macho, is_encrypted
+        from .analyze_macho import parse_macho, is_encrypted, find_arch
         from .calc_md5 import calc_md5
 
         # Calculate md5
@@ -66,6 +67,7 @@ class ipaInfos():
         # Parse macho executable
         macho = parse_macho(self.rawPlist, ipa)
         self.encrypt = is_encrypted(macho)
+        self.arch = find_arch(macho)
 
         # Calc size
         self.size = get_size(ipa)
